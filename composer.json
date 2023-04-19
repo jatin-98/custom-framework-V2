@@ -1,0 +1,22 @@
+{
+    "name": "bam20620/jatin",
+    "description": "CUSTOM PHP FRAMEWORK",
+    "autoload": {
+        "psr-4": {
+            "Src\\": "src/",
+            "App\\Controllers\\" : "App/Controllers",
+            "App\\Middlewares\\" : "App/Middlewares",
+            "App\\Models\\" : "App/Models"
+        }, 
+        "files":[
+            "helper.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "jchauhan",
+            "email": "jchauhan@bamko.net"
+        }
+    ],
+    "require": {}
+}
