@@ -1,5 +1,5 @@
 {
-    "name": "bam20620/jatin",
+    "name": "cuatomframework",
     "description": "CUSTOM PHP FRAMEWORK",
     "autoload": {
         "psr-4": {
@@ -14,8 +14,8 @@
     },
     "authors": [
         {
-            "name": "jchauhan",
-            "email": "jchauhan@bamko.net"
+            "name": "Jatin Chauhan",
+            "email": "enme1704@gmail.com"
         }
     ],
     "require": {}
