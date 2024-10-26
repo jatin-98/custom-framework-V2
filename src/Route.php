@@ -76,26 +76,3 @@ class Route
         return $this;
     }
 }
-
-
-/* 
-
-Sure, here are some suggestions for advancing the Route class:
-
-Parameterized routes: Allow routes to include parameters that can be extracted and passed to the controller action. For example, a route like /users/{id} could match /users/1 and pass 1 as a parameter to the controller action. This can be achieved using regular expressions to define route patterns and extracting parameters from the requested route. {DONE}
-
-Route groups: Allow routes to be grouped together with a common prefix or middleware. This can make it easier to organize routes and apply middleware to multiple routes at once.
-
-Middleware pipeline: Instead of attaching middleware to individual routes, create a middleware pipeline that can be applied to all routes. This can allow for more complex middleware handling and make it easier to add and remove middleware as needed.
-
-Route caching: Cache route definitions and controller actions to improve performance and reduce the need for repeated route parsing and controller instantiation.
-
-Route dispatching: Use a more robust route dispatching algorithm to handle complex route matching and prioritization, such as the FastRoute library.
-
-Route parameters validation: Validate and sanitize incoming route parameters to prevent injection attacks or other security vulnerabilities. {NOT NECESSARY}
-
-Route methods restriction: Allow to restrict the HTTP methods that can be used to access a route. This can help to ensure that only valid requests are being made to the server. {NOT NECESSARY}
-
-By incorporating these features, the Route class can become a more powerful and secure routing system for a web application.
-
-*/
