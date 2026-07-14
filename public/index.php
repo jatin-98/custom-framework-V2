@@ -21,21 +21,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // echo $handler->write('dgjenelntqnkb0tpvcgv6ac4np', serialize(['jatin' => 'name']));
 // echo $handler->destroy('dgjenelntqnkb0tpvcgv6ac4np');
 
-$routes = new Route();
-$routes->post('register', [UserController::class, 'register']);
-$routes->get('login', [UserController::class, 'login']);
-$routes->post('login_validate', [UserController::class, 'validateLogin']);
-$routes->get('register', [UserController::class, 'register']);
-$routes->post('user_register', [UserController::class, 'userRegister']);
-$routes->get('profile', [UserController::class, 'profile'])->middleware(AuthMiddleware::class);
-$routes->get('forgot_password', [UserController::class, 'forgotPassword']);
-$routes->get('logout', [UserController::class, 'logout']);
-$routes->get('dashboard', [UserController::class, 'dashboard']);
-$routes->get('', function () {
-    redirect('login');
-});
-$routes->get('show/{id}', [UserController::class, 'show']);
-
+$routes = require_once __DIR__ . '/../routes/web.php';
 
 echo $routes->run();
 

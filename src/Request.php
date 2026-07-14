@@ -9,11 +9,7 @@ class Request
     public static function only(array $onlyKeys)
     {
         self::$request = array_merge($_GET, $_POST, $_FILES);
-        $filteredArray = array_filter(self::$request, function ($v) use ($onlyKeys) {
-            return in_array($v, $onlyKeys);
-        }, ARRAY_FILTER_USE_KEY);
-
-        return $filteredArray;
+        return array_intersect_key(self::$request, array_flip($onlyKeys));
     }
 
     public static function replaceKeys(array $replacingArray)

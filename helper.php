@@ -21,16 +21,16 @@ if (!function_exists('getMethod')) {
 }
 
 if (!function_exists('guestView')) {
-    function guestView($fileName)
+    function guestView($fileName, $data = [])
     {
-        echo View::guestView($fileName);
+        echo View::guestView($fileName, $data);
     }
 }
 
 if (!function_exists('masterView')) {
-    function masterView($fileName)
+    function masterView($fileName, $data = [])
     {
-        echo View::masterView($fileName);
+        echo View::masterView($fileName, $data);
     }
 }
 
@@ -51,7 +51,8 @@ if (!function_exists('asset')) {
 if (!function_exists('redirect')) {
     function redirect($uri)
     {
-        print(sprintf('<script>window.location.href = "%s"</script>', asset("../$uri")));
+        header("Location: " . asset("../$uri"));
+        exit;
     }
 }
 

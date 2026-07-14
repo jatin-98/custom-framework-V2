@@ -20,19 +20,12 @@ class DB
         }
     }
 
-    protected function connect()
+    protected static function connect()
     {
-        self::$pdo = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE, DB_USER, DB_PASS);
-        self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-
-        /* if (self::$pdo === null) {
-            $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE;
-            $options = [
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            ];
-            self::$pdo = new \PDO($dsn, DB_USER, DB_PASS, $options);
-        } */
+        if (self::$pdo === null) {
+            self::$pdo = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE, DB_USER, DB_PASS);
+            self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+        }
     }
 
     public function __sleep()
@@ -50,26 +43,31 @@ class DB
         return self::$connection;
     }
 
-    public static function query($query, $fetch = null)
+    public static function query($query, $fetch = null, $data = [])
     {
-        new self();      
+        self::connect();
         $stmt = self::$pdo->prepare($query);       
-        $stmt->execute(self::$data);
+        $executeData = !empty($data) ? $data : self::$data;
+        $stmt->execute($executeData);
+        self::$data = [];
 
         if ($fetch === null) return true;
 
-        return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'] === 'singleRecord' ? $stmt->fetch($fetch) : $stmt->fetchAll($fetch);
+        if ($fetch === 'single') {
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        }
+        
+        return $stmt->fetchAll($fetch);
     }
 
-    public static function allRecords($query)
+    public static function allRecords($query, $data = [])
     {
-        return self::query($query, self::$fetch);
+        return self::query($query, \PDO::FETCH_ASSOC, $data);
     }
 
-    public static function singleRecord($query)
+    public static function singleRecord($query, $data = [])
     {
-        self::$fetch = \PDO::FETCH_ORI_FIRST;
-        return self::query($query, self::$fetch);
+        return self::query($query, 'single', $data);
     }
 
     public static function data(array $data)

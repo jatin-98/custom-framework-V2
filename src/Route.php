@@ -26,53 +26,61 @@ class Route
     {
         $pattern = preg_replace('/\{([A-Za-z0-9_]+)\}/', '(?P<$1>[A-Za-z0-9_]+)', $path);
         $pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
-        $this->routes[$pattern] = [$method, $controller];
+        $this->routes[$pattern] = [
+            'method' => $method,
+            'controller' => $controller,
+            'middlewares' => []
+        ];
         return $this;
     }
 
     public static function routeName()
     {
-        if (strpos($_SERVER['DOCUMENT_ROOT'], basename(dirname(__DIR__)))) {
-            return str_replace('/', '', $_SERVER['REQUEST_URI']);
+        if (isset($_REQUEST['route'])) {
+            return trim($_REQUEST['route'], '/');
         }
-
-        return $_REQUEST['route'];
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        return trim(str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $path), '/');
     }
 
     public function run()
     {
-        foreach ($this->routes as $pattern => $callback) {
+        foreach ($this->routes as $pattern => $route) {
 
-            if (preg_match($pattern, self::routeName(), $matches) && in_array(getMethod(), $callback)) {
+            if (preg_match($pattern, self::routeName(), $matches) && getMethod() === $route['method']) {
 
                 // Remove the first element from the $matches array (the full match)
                 array_shift($matches);
 
-                if (array_key_exists(2, $callback)) {
-                    if (!(new $callback[2])->execute()) return false;
+                foreach ($route['middlewares'] as $middleware) {
+                    if (!(new $middleware)->execute()) return false;
+                }
+                
+                $controller = $route['controller'];
+
+                if (is_string($controller)) {
+                    return $controller;
                 }
 
-                if (is_string($callback[1])) {
-                    return $callback[1];
-                }
-
-                if (is_array($callback[1])) {
-                    $class = new $callback[1][0];
-                    $method = $callback[1][1];
+                if (is_array($controller)) {
+                    $class = new $controller[0];
+                    $method = $controller[1];
                     return $class->$method(...array_values($matches));
                 }
 
-                return call_user_func_array($callback[1], array_values($matches));
+                return call_user_func_array($controller, array_values($matches));
             }
         }
 
-        return dump('Route Not Found!');
+        header("HTTP/1.0 404 Not Found");
+        echo "404 Not Found";
+        return false;
     }
 
     public function middleware($middleware)
     {
         $key = array_key_last($this->routes);
-        array_push($this->routes[$key], $middleware);
+        $this->routes[$key]['middlewares'][] = $middleware;
         return $this;
     }
 }
